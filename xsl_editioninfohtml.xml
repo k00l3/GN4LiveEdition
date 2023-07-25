@@ -1,0 +1,204 @@
+<xsl:stylesheet xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ms="urn:schemas-microsoft-com:xslt" xmlns:lc="http://www.teradp.com/schemas/GN4/1/LoginContext.xsd" xmlns:oc="http://www.teradp.com/schemas/GN4/1/OperationContext.xsd" xmlns:fn="http://www.teradp.com/schemas/GN4/1/Xslt" xmlns:nav="http://www.teradp.com/schemas/GN4/1/ObjNav.xsd" xmlns:gn4="urn:schemas-teradp-com:gn4tera" xmlns:edfn="http://www.teradp.com/schemas/GN4/1/EditorialXslt" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:l="http://www.teradp.com/schemas/GN4/1/WinUI" xmlns:c="clr-namespace:TeraDP.GN4.Common;assembly=Common" xmlns:edWinUI="http://www.teradp.com/schemas/GN4/1/EdWinUI" xmlns:local="http://www.w3.org/1999/XSL/Transform" xmlns:bp="http://www.teradp.com/schemas/GN4/1/BindingPath" xmlns="" version="1.0" exclude-result-prefixes="xsl ms lc oc fn nav gn4 x xhtml l c edWinUI local bp">
+  <xsl:output method="html" />
+  <xsl:param name="context" />
+  <xsl:param name="pars" />
+  <xsl:template match="/">
+    <xsl:apply-templates />
+  </xsl:template>
+  <xsl:template match="gn4:objects">
+    <xsl:message terminate="yes">This feed can receive only one edition id.</xsl:message>
+  </xsl:template>
+  <xsl:template match="gn4:edition">
+    <xsl:variable name="editionObj" select="." />
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+        <title>
+          <xsl:value-of select="@name" />
+        </title>
+      </head>
+      <body>
+        <h5>
+          <xsl:value-of select="@name" />
+        </h5>
+        <p>
+          <xsl:value-of select="concat('id:',fn:objectIdFromString(@id))" />
+          <br />
+          <xsl:value-of select="gn4:titleRef/nav:refObject/gn4:title/@name" /> | <xsl:value-of select="fn:formatDateTime(fn:toLocalTime(@date),'yyyy-MM-dd')" /></p>
+        <h5>Pages</h5>
+        <xsl:variable name="pages" select="nav:referencing/nav:referencingBy[@attrName='page.editionRef']/nav:refs" />
+        <xsl:if test="string($pages/@handle)">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>preview</th>
+                <th>id</th>
+                <th>MP Page ID</th>
+                <th>number</th>
+                <th>section</th>
+                <th>zone</th>
+                <th>booklet</th>
+                <th>master</th>
+                <th>logical</th>
+                <th>layers</th>
+              </tr>
+            </thead>
+            <tbody>
+              <xsl:for-each select="$pages/nav:refObject/gn4:page">
+                <xsl:sort select="gn4:bookRef/nav:refObject/gn4:book/@name" data-type="text" />
+                <xsl:sort select="@number" data-type="number" />
+                <tr>
+                  <td>
+                    <img class="img-thumbnail" src="{edfn:pagePreviewUrl(@id, 'Preview480px')}" />
+                  </td>
+                  <td>
+                    <xsl:value-of select="fn:objectIdFromString(@id)" />
+                  </td>
+                  <td>
+                    <xsl:value-of select="@externalUniqueId" />
+                  </td>
+                  <td>
+                    <xsl:value-of select="@number" />
+                  </td>
+                  <td>
+                    <xsl:value-of select="gn4:sectionRef/nav:refObject/gn4:section/@name" />
+                  </td>
+                  <td>
+                    <xsl:value-of select="gn4:zoneRef/nav:refObject/gn4:zone/@name" />
+                  </td>
+                  <td>
+                    <xsl:value-of select="gn4:bookRef/nav:refObject/gn4:book/@name" />
+                  </td>
+                  <td>
+                    <xsl:value-of select="gn4:masterRef/nav:refObject/gn4:master/@name" />
+                  </td>
+                  <td>
+                    <xsl:choose>
+                      <xsl:when test="@logicalPage='true'">
+                        <xsl:attribute name="style">
+                          <xsl:text>background-color:yellow;</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>LOGICAL</xsl:text>
+                      </xsl:when>
+                      <xsl:otherwise />
+                    </xsl:choose>
+                  </td>
+                  <td>
+                    <xsl:call-template name="renderLayers">
+                      <xsl:with-param name="pageObj" select="." />
+                    </xsl:call-template>
+                    <xsl:call-template name="renderADS">
+                      <xsl:with-param name="pageObj" select="." />
+                    </xsl:call-template>
+                  </td>
+                </tr>
+              </xsl:for-each>
+            </tbody>
+          </table>
+        </xsl:if>
+      </body>
+    </html>
+  </xsl:template>
+  <xsl:template name="renderLayers">
+    <xsl:param name="pageObj" />
+    <xsl:variable name="layers" select="$pageObj/nav:referencing/nav:referencingBy[@attrName='pageLayer.pages']/nav:refs" />
+    <xsl:if test="string($layers/@handle)">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>kind</th>
+            <th>in use by</th>
+            <th>in use time</th>
+            <th>last modified</th>
+            <th>Lock level</th>
+            <th>Layers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <xsl:for-each select="$layers/nav:refObject/gn4:pageLayer">
+            <xsl:variable name="checkOuts" select="nav:checkOuts" />
+            <tr>
+              <xsl:if test="@lockLevel=255">
+                <xsl:attribute name="style">
+                  <xsl:text>background-color:red;color:white;</xsl:text>
+                </xsl:attribute>
+              </xsl:if>
+              <td>
+                <xsl:value-of select="gn4:layerTypeRef/nav:refObject/gn4:layerType/@name" />
+              </td>
+              <td>
+                <xsl:value-of select="nav:checkOuts/nav:checkOut/gn4:user/nav:refObject/gn4:user/@nav:descName" />
+              </td>
+              <td>
+                <xsl:value-of select="fn:formatDateTime(fn:toLocalTime(nav:checkOuts/nav:checkOut/@Time),'yyyy-MM-dd hh:mm tt')" />
+              </td>
+              <td>
+                <xsl:value-of select="fn:formatDateTime(fn:toLocalTime(@modifiedDate),'yyyy-MM-dd hh:mm tt')" />
+              </td>
+              <td>
+                <xsl:value-of select="@lockLevel" />
+              </td>
+            </tr>
+          </xsl:for-each>
+        </tbody>
+      </table>
+    </xsl:if>
+  </xsl:template>
+  <xsl:template name="renderADS">
+    <xsl:param name="pageObj" />
+    <xsl:variable name="layers" select="$pageObj/nav:referencing/nav:referencingBy[@attrName='pageLayer.pages']/nav:refs" />
+    <xsl:variable name="dummyImg">
+      <xsl:text>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4AQMAAAADqqSRAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURQAAAP///6XZn90AAAAJcEhZcwAAGdYAABnWARjRyu0AAAH3SURBVEjHpZUxbsMwDEUpuKi7uWO3XKFjtlyrQ4HoaD6Kj+DRg2CVpCjq00CHop7yrEj8tvk/6c9XhaswP4GPN6IH8P5BdAPe7kQL8PpFLzNwPuh1Ak4HzWngOTFnKD8zr0PAsTBvQ8B+Y96HgO3BfAwB65O5DAG5Mp9DQBKuaZRXzqO8sgvgk4VdAFcWdgG8IOwCeKOwC+CDhV0AFxbuAuS+cvbyjU2AnKtsAqSusgmQ28omQLYpmwA5VtkESFnlJkDvNs69vLEK0FMbqwCt2lh/6s3G+te2Sbn4oY21VBosv5so49xFG8ubXIC5VntoY4YNmf+8PoD5sPwE5mKtz41rOlPgXKbA69ccePtcAu9mg86H2aRzMRt1Ps1mnXsP/LZ+3X89f3+P9bd71Ld+R/35jM+Xanh+Xs3IpbtgvN8N3y+///A9xAn4vXhz+J758r1TDf2ga9AvZTTh6C/oN60N/diWRr/qVujnXGvo9+SfAP3hfjH/uJ/MX+4385/70fzpfjX/up/N3+73HkCWB54PlheeH5Ynni+WN54/lkeeT5ZXnl+WZ55vlncjgNMlHzUvIT81TyFfNW8hfzWPIZ81ryG/Nc8h3zXvIf9lHoT5wPMizA+eJ2G+yLzB+SPzCOeTzCucX+Uy304iLF8r0RQ4078uoh+3gWiNwU2kHgAAAABJRU5ErkJggg==</xsl:text>
+    </xsl:variable>
+    <xsl:variable name="imgs">
+      <imgs>
+        <xsl:for-each select="$pageObj/nav:referencing/nav:referencingBy/nav:refs/nav:refObject/gn4:img">
+          <img id="{@id}">
+            <xsl:attribute name="src">
+              <xsl:choose>
+                <xsl:when test="gn4:low">
+                  <xsl:value-of select="concat('data:image/png;base64, ',gn4:thumbnail/gn4:data)" />
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="$dummyImg" />
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:attribute>
+          </img>
+          <xsl:value-of select="concat(' ',@name,' [',@id,']')" />
+        </xsl:for-each>
+      </imgs>
+    </xsl:variable>
+    <table class="table">
+      <thead>
+        <tr>
+          <th />
+          <th>ADS on this page</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td />
+          <td>
+            <ul>
+              <xsl:if test="string($layers/@handle)">
+                <xsl:for-each select="$layers/nav:refObject/gn4:pageLayer[gn4:layerTypeRef/nav:refObject/gn4:layerType/@name='Ads']">
+                  <xsl:for-each select="nav:referencing/nav:referencingBy/nav:refs/nav:refObject/gn4:img">
+                    <xsl:variable name="imgId" select="@id" />
+                    <li>
+                      <xsl:copy-of select="msxsl:node-set($imgs)//img[@id=$imgId]" />
+                      <xsl:value-of select="concat(' ',@name,' [',@id,']')" />
+                    </li>
+                  </xsl:for-each>
+                </xsl:for-each>
+              </xsl:if>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </xsl:template>
+  <xsl:template match="*" />
+</xsl:stylesheet>
