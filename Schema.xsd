@@ -1,0 +1,1724 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema
+  targetNamespace="urn:schemas-teradp-com:gn4tera"
+  elementFormDefault="qualified"
+  xmlns="urn:schemas-teradp-com:gn4tera"
+  xmlns:nav="http://www.teradp.com/schemas/GN4/1/ObjNav.xsd"
+  xmlns:gn4="urn:schemas-teradp-com:gn4tera"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:gs="http://www.teradp.com/schemas/GN4/1/XmlSchemaExt.xsd"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  gs:modules="Editorial">
+
+  <xs:annotation>
+    <xs:documentation>GN4 editorial system schema</xs:documentation>
+  </xs:annotation>
+
+  <!--
+    ===========================================================================
+    Includes
+    ===========================================================================
+  -->
+
+  <xs:include schemaLocation="GN4Editorial.xsd">
+    <xs:annotation>
+      <xs:documentation>Include editorial object types</xs:documentation>
+    </xs:annotation>
+  </xs:include>
+
+  <xs:include schemaLocation="TBG_Tark4Include.xsd">
+    <xs:annotation>
+      <xs:documentation>Include Tark4 object types</xs:documentation>
+    </xs:annotation>
+  </xs:include>
+
+
+  <!--
+    ===========================================================================
+    objGroup: groups of objects. 
+    ===========================================================================
+  -->
+
+  <xs:complexType name="objGroup" gs:key="folderRef name" gs:descName="gn4:title">
+    <xs:annotation>
+      <xs:documentation>Group of related objects</xs:documentation>
+    </xs:annotation>
+    <!--
+      Group - Copy of Package for general usage - This one refers to folderObject
+    -->
+    <xs:complexContent>
+      <xs:extension base="folderObject">
+        <xs:sequence>
+          <xs:element name="objs" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Objects belonging to the group - as references. Note that this can include groups - creating hierarchies.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="ref" minOccurs="0" maxOccurs="unbounded" gs:ordered="true" gs:refer="folderObject">
+                  <xs:complexType>
+                    <xs:complexContent>
+                      <xs:extension base="reference">
+                        <xs:sequence>
+                          <xs:element name="rel" type="categoryRef" minOccurs="0" nillable="true" gs:refer="ObjsGroupRelationships">
+                            <xs:annotation>
+                              <xs:documentation>Relationship between the group and the referenced object</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="title" minOccurs="0" type="tShortLine">
+                            <xs:annotation>
+                              <xs:documentation>Short natural language description of the relationship</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="caption" minOccurs="0" type="tShortText">
+                            <xs:annotation>
+                              <xs:documentation>Descriptive text associated with the referenced object.</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:extension>
+                    </xs:complexContent>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="kind" type="categoryRef" minOccurs="0" nillable="true" gs:refer="ObjsGroupKinds">
+            <xs:annotation>
+              <xs:documentation>Group's kind</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="objGroup" type="objGroup">
+    <xs:annotation>
+      <xs:documentation>Group of related objects</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!--
+    ===========================================================================
+    Object types attributes - i.e. 'meta attributes' associated with the object 
+    types themselves instead than with the individual objects
+    We must declare them because they are used within the editorial objects
+    ===========================================================================
+  -->
+
+  <xs:complexType name="_objectType">
+    <xs:annotation>
+      <xs:documentation>Object type attributes</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="_objectTypeEditorial">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!--
+    ===========================================================================
+    Additional attributes of the editorial types
+    ===========================================================================
+  -->
+
+  <xs:attributeGroup name="justScopeExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'justScope' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="justScopeExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'justScope' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="fontLayoutExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'fontLayout' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="fontLayoutExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'fontLayout' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="fontExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'font' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="fontExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'font' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="justDefExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'justDef' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="justDefExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'justDef' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="hyphenationExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'hyphenation' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="hyphenationExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'hyphenation' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="justContextExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'justContext' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="justContextExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'justContext' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="geometryExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'geometry' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="geometryExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'geometry' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="printTemplateExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'printTemplate' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="printTemplateExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'printTemplate' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="printQueueExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'printQueue' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="printQueueExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'printQueue' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="printConfigExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'printConfig' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="printConfigExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'printConfig' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="linkObjectExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'linkObject' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="linkObjectExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'img' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="isLinked" type="xs:boolean" minOccurs="0" default="false" gs:compute="true">
+        <xs:annotation>
+          <xs:documentation>Computed boolean: false: not linked - true: linked</xs:documentation>
+          <xs:appinfo>
+            <gs:ui mode="ReadOnly"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="sourceRef" minOccurs="0" nillable="true" type="reference" gs:refer="source">
+        <xs:annotation>
+          <xs:appinfo>
+            <gs:fullTextAttr exaMetaName="sourceRef"/>
+          </xs:appinfo>
+          <xs:documentation>The external source of the object (i.e. CosMos)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="sourceId" minOccurs="0" type="tSourceId">
+        <xs:annotation>
+          <xs:appinfo>
+            <gs:fullTextAttr exaMetaName="sourceInfo"/>
+          </xs:appinfo>
+          <xs:documentation>The unique identifier of the object in the source system</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="sourceFileName" minOccurs="0" type="tPath">
+        <xs:annotation>
+          <xs:documentation>The name of the file this object has been created from - either the original name of an uploaded file or the name of a file processed in a spool folder.</xs:documentation>
+          <xs:appinfo>
+            <gs:fullTextAttr exaMetaName="sourceInfo"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="imgExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'img' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="archiveObjectExtra"/>
+  </xs:attributeGroup>
+  
+  <xs:group name="imgExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'img' object type that are rendered as XML element</xs:documentation>
+      <xs:appinfo>
+        <gs:compute inherit="true">
+          <img xmlns:msxsl="urn:schemas-microsoft-com:xslt">
+            <xsl:variable name="isPub" select="nav:referencing/nav:referencingBy[@attrName='pubDest.objs']/nav:refs"/>
+            <!-- 'Fake' test of the handle attribute to generate a dependency -->
+            <xsl:if test="string($isPub/@handle)">
+              <xsl:choose>
+                <xsl:when test="$isPub/nav:refObject/gn4:pubDest">
+                  <isPublished>true</isPublished>
+                </xsl:when>
+                <xsl:otherwise>
+                  <isPublished>false</isPublished>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:if>
+            <xsl:variable name="layerImgs" select="nav:referencing/nav:referencingBy[@attrName='layer.imgs']/nav:refs"/>
+            <xsl:choose>
+              <xsl:when test="string($layerImgs/@handle) and $layerImgs/nav:refObject/gn4:pageLayer">
+                <isLinked>true</isLinked>
+              </xsl:when>
+              <xsl:otherwise>
+                <isLinked>false</isLinked>
+              </xsl:otherwise>
+            </xsl:choose>            
+          </img>
+        </gs:compute>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:group ref="archiveObjectExtra"/>
+      <xs:element name="authorRef" type="reference" minOccurs="0" nillable="true" gs:refer="user">
+        <xs:annotation>
+          <xs:documentation>Author of the image</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="notes" type="tDescription" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Copy-flow notes</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:attributeGroup name="txtExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'txt' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="txtExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'txt' object type that are rendered as XML element</xs:documentation>
+      <xs:appinfo>
+        <gs:compute inherit="true">
+          <txt>
+            <xsl:variable name="txtGeometryTxt" select="nav:referencing/nav:referencingBy[@attrName='txtGeometry.txtRef']/nav:refs"/>
+            <xsl:variable name="pageLayersFragment">
+              <xsl:if test="string($txtGeometryTxt/@handle)">
+                <xsl:for-each select="$txtGeometryTxt/nav:refObject/gn4:txtGeometry">
+                  <xsl:variable name="regionId" select="gn4:regionRef/@idref"/>
+                  <xsl:if test="string(gn4:jumps/@nav:handle)">
+                    <xsl:for-each select="gn4:jumps/gn4:ref[@hasFrames='true']">
+                      <xsl:variable name="layerId" select="@idref"/>
+                      <xsl:variable name="layer" select="nav:refObject/gn4:pageLayer"/>
+                      <xsl:for-each select="$layer/gn4:pages/gn4:ref">
+                        <item  key="{concat(fn:objectIdFromString($layerId),'-',fn:objectIdFromString(@idref))}">
+                          <xsl:if test="string(gn4:sectionRef/@idref)">
+                            <sectionRef idref="{gn4:sectionRef/@idref}" name="{gn4:sectionRef/nav:refObject/gn4:section/@name}"/>
+                          </xsl:if>
+                        </item>
+                      </xsl:for-each>
+                    </xsl:for-each>
+                  </xsl:if>
+                </xsl:for-each>
+              </xsl:if>
+            </xsl:variable>
+            <xsl:variable name="pageLayers" select="msxsl:node-set($pageLayersFragment)"/>
+            <xsl:choose>
+              <xsl:when test="$pageLayers and $pageLayers/gn4:item">
+                <xsl:variable name="sectionName" select="$pageLayers/gn4:item[1]/gn4:sectionRef/@name"/>
+                <sectionColor>
+                  <xsl:value-of select="concat('color',$sectionName)"/>
+                </sectionColor>
+                <sectionHead>
+                  <xsl:value-of select="concat('head',$sectionName)"/>
+                </sectionHead>
+                <isLinked>true</isLinked>
+              </xsl:when>
+              <xsl:otherwise>
+                <sectionColor/>
+                <sectionHead/>
+                <isLinked>false</isLinked>
+              </xsl:otherwise>
+            </xsl:choose>
+          </txt>
+        </gs:compute>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="authorRef" type="reference" minOccurs="0" nillable="true" gs:refer="user">
+        <xs:annotation>
+          <xs:documentation>Author of the text - it can be diffrent that the creator if the text is being entered in the system on behalf of someone else</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="notes" type="tDescription" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Copy-flow notes</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:sequence>
+        <xs:element name="sectionColor" default="" type="xs:string" gs:compute="true" minOccurs="0" nillable="true">
+          <xs:annotation>
+            <xs:documentation>Section color</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="sectionHead" default="" type="xs:string" gs:compute="true" minOccurs="0" nillable="true">
+          <xs:annotation>
+            <xs:documentation>Headline color by section</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="urlExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'url' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="urlExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'url' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="articleExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'article' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="duration" type="xs:float" gs:dimension="time:s" gs:access="Content" gs:compute="true">
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:ui mode="ReadOnly"/>
+        </xs:appinfo>
+        <xs:documentation>The max duration of the item contained into the article</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="archiveObjectExtra"/>
+  </xs:attributeGroup>
+
+  <xs:group name="articleExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'article' object type thatare rendered as XML element</xs:documentation>
+      <xs:appinfo>
+        <gs:compute inherit="true">
+          <article xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:t="http://www.teradp.com/schemas/GN3/t.xsd">
+            <xsl:attribute name="duration">
+              <xsl:variable name="readingTimeParams" select="$context/lc:LoginContext/lc:GlobalConfig/lc:ReadingTime"/>
+              <xsl:variable name="readingTime" select="fn:estimateReadingTime(gn4:txts/gn4:body/gn4:tText,$readingTimeParams,1,'')"/>
+              <xsl:variable name="articleDurations">
+                <root xmlns="">
+                  <item>
+                    <xsl:choose>
+                      <xsl:when test="$readingTime/@avg">
+                        <xsl:value-of select="$readingTime/@avg"/>
+                      </xsl:when>
+                      <xsl:otherwise>0</xsl:otherwise>
+                    </xsl:choose>
+                  </item>
+                  <xsl:for-each select="gn4:txts/gn4:*/gn4:ref/nav:refObject/gn4:*[local-name()='audio' or local-name()='video']">
+                    <item>
+                      <xsl:value-of select="@duration"/>
+                    </item>
+                  </xsl:for-each>
+                </root>
+              </xsl:variable>
+              <xsl:value-of select="fn:maxNumber(msxsl:node-set($articleDurations)/root/*)" />
+            </xsl:attribute>
+
+            <xsl:variable name="isPub" select="nav:referencing/nav:referencingBy[@attrName='pubDest.objs']/nav:refs"/>  
+            <!-- 'Fake' test of the handle attribute to generate a dependency -->
+            <xsl:if test="string($isPub/@handle)">
+              <xsl:choose>
+                <xsl:when test="$isPub/nav:refObject/gn4:pubDest">
+                  <isPublished>true</isPublished>
+                </xsl:when>
+                <xsl:otherwise>
+                  <isPublished>false</isPublished>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:if>
+            <xsl:variable name="pageLayers" select="gn4:txts/*/gn4:pageLayers"/>
+            <xsl:choose>
+              <xsl:when test="$pageLayers and $pageLayers/gn4:item">
+                <isLinked>true</isLinked>
+              </xsl:when>
+              <xsl:otherwise>
+                <isLinked>false</isLinked>
+              </xsl:otherwise>
+            </xsl:choose>
+            <!-- number of imgs attached to the article. To minimize the compute we are not checking if an img is referenced.-->
+            <nImgs>
+              <xsl:value-of select="count(gn4:txts/gn4:photoCaption)"/>
+            </nImgs>
+            <headline>
+              <xsl:if test="$context/oc:OperationContext/@Kind!='Upgrade'" >
+                <xsl:if test="gn4:txts/gn4:head">
+                  <xsl:for-each select="gn4:txts/gn4:head/gn4:tText/t:t/t:p/text()">
+                    <xsl:value-of select="concat(normalize-space(.),' ')"/>
+                  </xsl:for-each>
+                </xsl:if>
+              </xsl:if>
+            </headline>
+          </article>
+        </gs:compute>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:group ref="archiveObjectExtra"/>
+      <xs:element name="authorRef" type="reference" minOccurs="0" nillable="true" gs:refer="user">
+        <xs:annotation>
+          <xs:documentation>Author of the article - it can be different than the creator if the article is being entered on behalf of someone else</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="notes" type="tDescription" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Copy-flow notes</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nImgs" type="tNonNegativeInt" minOccurs="0" default="0" gs:compute="true">
+        <xs:annotation>
+          <xs:documentation>Number of images linked to the article.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="headline" type="tText" minOccurs="0" gs:compute="true">
+        <xs:annotation>
+          <xs:documentation>Automatically computed attribute containing the plain text of the hedline.</xs:documentation>
+          <xs:appinfo>
+            <gs:fullTextAttr exaMetaName="gn4Title"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="titleExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'title' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="titleExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'title' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="milestoneExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'milestone' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="milestoneExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'milestone' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="regionExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'region' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="regionExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'region' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="editionExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'edition' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+
+  </xs:attributeGroup>
+
+  <xs:group name="editionExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'edition' object type that are rendered as XML element</xs:documentation>
+	  <xs:appinfo>
+        <gs:compute inherit="true">
+          <edition xmlns:tagscripts="urn:teradp-com:externaldll:TagScripts:Editions">
+            <FMEndDate>
+              <xsl:value-of select="tagscripts:ARENA_NextWeek(@date)"/>
+            </FMEndDate>
+          </edition>
+        </gs:compute>
+      </xs:appinfo>	
+  </xs:annotation>
+    <xs:sequence>
+      <xs:element name="NumberOrd" type="tOptionalName" minOccurs="0" nillable="true">
+        <xs:annotation>
+          <xs:documentation>NumberOrd of the edition</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+	  <xs:element name="FMEndDate" type="tDescription" gs:compute="true">
+        <xs:annotation>
+          <xs:documentation>End date for the FM Edition</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="extDocExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'extDoc' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="extDocExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'extDoc' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="masterExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'master' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="masterExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'master' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="layerTypeExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'layerType' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="layerTypeExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'layerType' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="pageLayerExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'pageLayer' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="pageLayerExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'pageLayer' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="pageExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'page' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="pageExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'page' object type that are rendered as XML element</xs:documentation>
+      <xs:appinfo>
+        <gs:compute inherit="true">
+          <page>
+						<xsl:variable name="sectionName" select="gn4:sectionRef/*/gn4:section/@name"/>
+            <sectionColor>
+              <xsl:value-of select="concat('color',$sectionName)"/>
+            </sectionColor>
+            <sectionHead>
+              <xsl:value-of select="concat('head',$sectionName)"/>
+            </sectionHead>
+            <xsl:if test="gn4:layers/gn4:ref and string(gn4:layers/@nav:handle)">
+              <layersModifiedDate>
+                <xsl:value-of select="fn:maxDateTime(gn4:layers/gn4:ref/nav:refObject/*/@modifiedDate)" />
+              </layersModifiedDate>
+            </xsl:if>
+          </page>
+        </gs:compute>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="sectionColor" default="" type="xs:string" gs:compute="true" minOccurs="0" nillable="true">
+        <xs:annotation>
+          <xs:documentation>Section color</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="sectionHead" default="" type="xs:string" gs:compute="true" minOccurs="0" nillable="true">
+        <xs:annotation>
+          <xs:documentation>Headline color by section</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="layersModifiedDate" type="xs:dateTime"  gs:compute="true" minOccurs="0" nillable="true">
+        <xs:annotation>
+          <xs:documentation>When this page's layers have been modified. Automatically computed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="txtGeometryExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'txtGeometry' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="txtGeometryExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'txtGeometry' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="libExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'lib' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="libExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'lib' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="libObjExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'libObj' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="libObjExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'libObj' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="webCommentExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'webComment' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="webCommentExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'webComment' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:attributeGroup name="externalSystemExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'externalSystem' object type that are rendered as XML attributes</xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+
+  <xs:group name="externalSystemExtra">
+    <xs:annotation>
+      <xs:documentation>Additional attributes of the 'externalSystem' object type that are rendered as XML element</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="scopeRef" type="reference" minOccurs="0" gs:refer="justScope">
+        <xs:annotation>
+          <xs:documentation>Default justification scope the article will be assigned to.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="regionRef" type="reference" minOccurs="0" gs:refer="region">
+        <xs:annotation>
+          <xs:documentation>Default region to format the articles</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>  
+
+  <!--
+    ===========================================================================
+    Complex types used to define the texts XML structure.
+    They do not correspons to any object type
+    ===========================================================================
+  -->
+
+  <xs:complexType name="text">
+    <xs:annotation>
+      <xs:documentation>Element corresponding to text with markup applied directly (as opposed to a character style)</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="text" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:attribute name="f" type="textAttrib-f"/>
+    <xs:attribute name="fontName" type="textAttrib-fontName"/>
+    <xs:attribute name="fontFamily" type="textAttrib-fontFamily"/>
+    <xs:attribute name="it" type="textAttrib-it"/>
+    <xs:attribute name="bd" type="textAttrib-bd"/>
+    <xs:attribute name="small" type="textAttrib-small"/>
+    <xs:attribute name="h" type="textAttrib-h"/>
+    <xs:attribute name="w" type="textAttrib-w"/>
+    <xs:attribute name="co" type="textAttrib-co"/>
+    <xs:attribute name="gray" type="textAttrib-gray"/>
+    <xs:attribute name="jmp" type="textAttrib-jmp"/>
+    <xs:attribute name="mode" type="textAttrib-mode"/>
+    <xs:attribute name="modeData" type="textAttrib-modeData"/>
+  </xs:complexType>
+
+  <xs:complexType name="bell">
+    <xs:annotation>
+      <xs:documentation>Element corresponding to an isolated 'bell' character</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="bell" />
+      </xs:appinfo>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="br">
+    <xs:annotation>
+      <xs:documentation>Element corresponding to an end line</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="line" />
+      </xs:appinfo>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="inlineImg">
+    <xs:annotation>
+      <xs:documentation>Element corresponding to an inline image</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="img" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:attribute name="imgId" type="textAttrib-imgId" use="optional"/>
+    <xs:attribute name="imgName" type="textAttrib-imgName" use="optional"/>
+    <xs:attribute name="imgDummy" type="textAttrib-imgDummy" use="optional"/>
+    <xs:attribute name="w" type="textAttrib-w" use="optional"/>
+    <xs:attribute name="h" type="textAttrib-h" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="inlineRule">
+    <xs:annotation>
+      <xs:documentation>Element corresponding to an inline image</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="rule" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:attribute name="w" type="textAttrib-w" use="optional"/>
+    <xs:attribute name="h" type="textAttrib-h" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="link">
+    <xs:annotation>
+      <xs:documentation>Element corresponding to a character style used to insert links</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="url" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="p" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Standard text paragraph</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="para" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="text" type="text" minOccurs="0" />
+      <xs:element name="link" type="link" minOccurs="0" />
+      <xs:element name="bell" type="bell" minOccurs="0" />
+      <xs:element name="br" type="br" minOccurs="0" />
+      <xs:element name="inlineImg" type="inlineImg" minOccurs="0" />
+      <xs:element name="inlineRule" type="inlineRule" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="headline" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Headline paragraph</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+	
+	<!--custom element-->
+	<xs:complexType name="straphead" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Straphead paragraph</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+
+  <xs:complexType name="byline" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Byline paragraph</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+	
+	<!--custom element-->
+	<xs:complexType name="beat" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Byline beat paragraph</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="dlStart" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Start of a dateline paragraph</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="dlText" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Text of a dateline paragraph</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="dateline" mixed="false">
+    <xs:annotation>
+      <xs:documentation>Paragraph starting with the dataline</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="dlStart" type="dlStart" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="dlText" type="dlText" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="credit" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Credit paragraph - used in photo captions</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="caption" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Credit paragraph - used in photo captions</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="crosshead" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Cross headline paragraph</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="td" mixed="true">
+    <xs:annotation>
+      <xs:documentation>Tabulation cell</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="cell" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="coln" type="textAttrib-colN"/>
+    <xs:attribute name="colspan" type="textAttrib-nCols"/>
+    <xs:attribute name="rown" type="textAttrib-rowN"/>
+    <xs:attribute name="rowspan" type="textAttrib-nRows"/>
+  </xs:complexType>
+
+  <xs:complexType name="tr">
+    <xs:annotation>
+      <xs:documentation>Tabulation row</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="row" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="td" type="td" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="table">
+    <xs:annotation>
+      <xs:documentation>Table</xs:documentation>
+      <xs:appinfo>
+        <gs:_objectType textElement="table" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="tr" type="tr" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="tableName" type="textAttrib-tableName"/>
+  </xs:complexType>
+
+  <!--
+    ===========================================================================
+    Image types
+    They are object types derived from 'img'
+    ===========================================================================
+  -->
+
+  <xs:element name="photo">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="img">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <!--
+    ===========================================================================
+    Text types
+    They are object types derived from 'txt'
+    ===========================================================================
+  -->
+
+  <xs:element name="head">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,hd" typeKind="headline" mediaType="Text">
+            <description>Headline</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="headline" type="headline" minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+									<xs:element name="straphead" type="straphead" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="webHead">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,whd" typeKind="headline" typeLink="no" mediaType="Text">
+            <description>Web headline</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="blogPost">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,blog" typeLink="no" mediaType="Text">
+            <description>Blog Post</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="crosshead" type="crosshead" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+                    <xs:element name="table" type="table" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="jumpHead">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,jhd" typeKind="headline" typeLink="single" mediaType="Text">
+            <description>Jump headline</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="body">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" typeKind="body" mediaType="Text">
+            <description>Body</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                  <xs:element name="byline" type="byline" minOccurs="0" maxOccurs="1"/>
+									<xs:element name="beat" type="beat" minOccurs="0" maxOccurs="1"/>
+									<xs:element name="dateline" type="dateline" minOccurs="0" maxOccurs="1"/>
+                  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="crosshead" type="crosshead" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="table" type="table" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="webBody">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,wbd" typeKind="body" typeLink="no" mediaType="Text">
+            <description>Web body</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                  <xs:element name="byline" type="byline" minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="dateline" type="dateline" minOccurs="0" maxOccurs="1"/>
+                  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="crosshead" type="crosshead" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="table" type="table" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="smsBody">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,sbd" typeKind="body" typeLink="no" mediaType="Text">
+            <description>SMS body</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="subhead">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,subhd" mediaType="Text">
+            <description>Sub-headline</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="kicker">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,kick" typeLink="single" mediaType="Text">
+            <description>Kicker</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="intro">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,intro" typeLink="single" mediaType="Text">
+            <description>Introduction</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="pullquote">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,pull&amp;n[1,2]" mediaType="Text">
+            <description>Pull quote</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="twitterMsg">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,sms" typeKind="body" typeLink="no" mediaType="Text">
+            <description>Twitter message</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="facebookMsg">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,sms" typeKind="body" typeLink="no" mediaType="Text">
+            <description>facebook message</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="photoCaption">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,ph&amp;n[1,2]" typeLink="single" mediaType="Text">
+            <description>Photo caption</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                  <xs:element name="credit" type="credit" minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="caption" type="caption" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="ref" type="reference" minOccurs="0" gs:refer="img"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="urlCaption">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,url&amp;n[1,2]" typeLink="no" mediaType="Text">
+            <description>Url caption</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="ref" type="reference" gs:refer="url"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="audioCaption">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,au&amp;n[1,2]" typeLink="no" mediaType="Text">
+            <description>Audio caption</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="ref" type="reference" gs:refer="audio"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="videoCaption">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,vi&amp;n[1,2]" typeLink="no" mediaType="Text">
+            <description>Video caption</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="ref" type="reference" gs:refer="video"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="galleryCaption">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,mmg&amp;n[1,2]" typeLink="no" mediaType="Text">
+            <description>Video caption</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="ref" type="reference" gs:refer="mediaGallery"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="sidebarHead">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,sdh&amp;n[1,2]" typeKind="headline" mediaType="Text" typeLink="single">
+            <description>Sidebar Head</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="sidebar">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <gs:_objectType deadlineGap="0" nameptt="&amp;a,sd&amp;n[1,2]" typeKind="body" mediaType="Text">
+            <description>Sidebar text. To have multiple sidebars on one frame each, add typeLink="single"</description>
+          </gs:_objectType>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+        <xs:extension base="txt">
+          <xs:sequence>
+            <xs:element name="xmlText" minOccurs="0" gs:storage="Ignore">
+              <xs:annotation>
+                <xs:documentation>Text XML structure. Not stored in the database</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="p" type="p" minOccurs="0" maxOccurs="unbounded"/>
+                  <xs:element name="table" type="table" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!--
+    ===========================================================================
+    Article structure definition
+    ===========================================================================
+  -->
+
+  <xs:complexType name="_articleTxts">
+    <xs:annotation>
+      <xs:documentation>The texts contained in an article</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="head" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="webHead" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="blogPost" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="jumpHead" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="subhead" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="kicker" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="intro" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="body" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="webBody" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="smsBody" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="twitterMsg" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="facebookMsg" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="pullquote" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="photoCaption" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="urlCaption" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="audioCaption" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="videoCaption" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="galleryCaption" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="sidebarHead" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="sidebar" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 
+    ===========================================================================
+    objects: this is the 'root' element needed to have individual XML file 
+    containing multiple objects. There must be only one such element in
+    the schema, and the software identify it because its type is not derived
+    by extension (all the other element corresponding to actual database
+    object have types derived by extension of the base 'object' type).
+    ===========================================================================
+  -->
+
+  <xs:element name="objects">
+    <xs:annotation>
+      <xs:documentation>Generic root element</xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <!-- 
+        The content is always an arbitrary sequence of all the main database
+        object types.
+      -->
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:group ref="editorialObjects"/>
+        <xs:group ref="tarkObjects"/>
+        <xs:element ref="objGroup" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="head" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="webHead" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="blogPost" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="jumpHead" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="subhead" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="kicker" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="intro" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="body" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="twitterMsg" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="facebookMsg" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="photo" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="pullquote" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="photoCaption" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="urlCaption" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="audioCaption" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="videoCaption" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="galleryCaption" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="sidebarHead" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="sidebar" minOccurs="0" maxOccurs="unbounded"/>        
+        <!-- Add here new object types  -->
+      </xs:sequence>
+    </xs:complexType>
+
+  </xs:element>
+
+</xs:schema>
