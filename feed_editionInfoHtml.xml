@@ -1,0 +1,2 @@
+<eop:XmlExportOptions xmlns:eop="http://www.teradp.com/schemas/GN4/1/XmlExportOptions.xsd" DataMaxSize="900000" AccessStrict="false" RefKeys="true" NavOptions="CheckOutInfo, Referencing,Names" MimeType="text/html" XsltUrl="self://localhost/do.ashx?cmd=config&amp;name=xsl_editionInfoHtml">
+</eop:XmlExportOptions>
